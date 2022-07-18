@@ -19,8 +19,8 @@ namespace RestWithASPNETUdemy.Controllers
             _personService = personService;
         }
 
-        // Operation Sum
-        [HttpGet()]
+       
+        [HttpGet]
         public IActionResult Get()
         {
             return Ok(_personService.FindAll());

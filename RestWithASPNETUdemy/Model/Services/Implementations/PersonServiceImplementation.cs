@@ -1,65 +1,91 @@
-﻿namespace RestWithASPNETUdemy.Model.Services.Implementations
+﻿using RestWithASPNETUdemy.Data;
+using System;
+using Microsoft.EntityFrameworkCore;
+using System.Web.Mvc;
+
+namespace RestWithASPNETUdemy.Model.Services.Implementations
 {
     public class PersonServiceImplementation : IPersonService
     {
-        private volatile int count;
+        private readonly ApplicationDbContext _context; 
 
-        public Person Create(Person person)
+        public PersonServiceImplementation(ApplicationDbContext context)
         {
-            return person;
-        }
-
-        public void Delete(int id)
-        {
-           
+            _context = context;
         }
 
         public List<Person> FindAll()
         {
-            List<Person> people = new List<Person>();
-            for(int i=0; i < 8; i++)
-            {
-                Person person = Mockperson(i);
-                people.Add(person);
-            }
-            return people;
+            return _context.People.ToList();
         }
 
         public Person FindById(int id)
         {
-            return new Person
-            {
-                Id = IncrementAndGet(),
-                FirstName = "Leandro",
-                LastName = "Costa",
-                Address = "Uberlandia -Minas Gerais - Brasil",
-                Gender = "Male"
 
-            };
+            return _context.People.SingleOrDefault(p => p.Id.Equals(id));
+
         }
 
+
+        public Person Create(Person person)
+        {
+            try
+            {
+                _context.Add(person);
+                _context.SaveChanges();
+
+            }
+            catch (Exception)
+            { 
+                throw;
+            }
+            return person;
+        }
         public Person Update(Person person)
         {
+            if (!Exists(person.Id)) throw new KeyNotFoundException("Person not found");
+
+            var result = _context.People.SingleOrDefault(p => p.Id.Equals(person.Id));
+            if (result != null)
+            {
+                try
+                {
+                    _context.Entry(result).CurrentValues.SetValues(person);
+                    _context.SaveChanges();
+
+                }
+                catch (Exception)
+                {
+                    throw;
+                }
+            }
 
             return person;
         }
 
-        private Person Mockperson(int i)
+
+        public void Delete(int id)
         {
-            return new Person
+            var result = _context.People.SingleOrDefault(p => p.Id.Equals(id));
+            if (result != null)
             {
-                Id = IncrementAndGet(),
-                FirstName = "Person Name" + i,
-                LastName = "Person LastName" + i,
-                Address = "Some Addres" + i,
-                Gender = "Male"
-            };
+                try
+                {
+                    _context.People.Remove(result);
+                    _context.SaveChanges();
+
+                }
+                catch (Exception)
+                {
+                    throw;
+                }
+            }
+
         }
 
-        private int IncrementAndGet()
+        private bool Exists(int id)
         {
-            
-            return Interlocked.Increment(ref count);
+            return _context.People.Any(p => p.Id.Equals(id));
         }
     }
 }
