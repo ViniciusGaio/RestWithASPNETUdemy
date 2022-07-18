@@ -1,6 +1,6 @@
 ﻿namespace RestWithASPNETUdemy.Model
 {
-    public class Model
+    public class Person
     {
         public long Id { get; set; }
         public string FirstName { get; set; }
