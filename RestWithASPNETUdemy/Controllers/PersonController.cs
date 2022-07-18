@@ -26,7 +26,7 @@ namespace RestWithASPNETUdemy.Controllers
             return Ok(_personService.FindAll());
         }
         [HttpGet("{id}")]
-        public IActionResult Get(long id)
+        public IActionResult Get(int id)
         {
             var person = _personService.FindById(id);
             if (person == null) return NotFound();
@@ -45,7 +45,7 @@ namespace RestWithASPNETUdemy.Controllers
             return Ok(_personService.Update(person));
         }
         [HttpDelete("{id}")]
-        public IActionResult Delete(long id)
+        public IActionResult Delete(int id)
         {
             _personService.Delete(id);
             return NoContent();
