@@ -6,7 +6,7 @@ using System;
 namespace RestWithASPNETUdemy.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     public class PersonController : ControllerBase
     {
 
@@ -20,12 +20,12 @@ namespace RestWithASPNETUdemy.Controllers
         }
 
         // Operation Sum
-        [HttpGet("{id}")]
+        [HttpGet()]
         public IActionResult Get()
         {
             return Ok(_personService.FindAll());
         }
-        [HttpGet]
+        [HttpGet("{id}")]
         public IActionResult Get(long id)
         {
             var person = _personService.FindById(id);
@@ -44,7 +44,7 @@ namespace RestWithASPNETUdemy.Controllers
             if (person == null) return BadRequest();
             return Ok(_personService.Update(person));
         }
-        [HttpDelete]
+        [HttpDelete("{id}")]
         public IActionResult Delete(long id)
         {
             _personService.Delete(id);
