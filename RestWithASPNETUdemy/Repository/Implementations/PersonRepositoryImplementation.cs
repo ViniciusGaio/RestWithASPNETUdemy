@@ -1,15 +1,14 @@
 ﻿using RestWithASPNETUdemy.Data;
-using System;
-using Microsoft.EntityFrameworkCore;
-using System.Web.Mvc;
+using RestWithASPNETUdemy.Model;
+using RestWithASPNETUdemy.Repository;
 
-namespace RestWithASPNETUdemy.Model.Services.Implementations
+namespace RestWithASPNETUdemy.Repository.Implementations
 {
-    public class PersonServiceImplementation : IPersonService
+    public class PersonRepositoryImplementation : IPersonRepository
     {
         private readonly ApplicationDbContext _context; 
 
-        public PersonServiceImplementation(ApplicationDbContext context)
+        public PersonRepositoryImplementation(ApplicationDbContext context)
         {
             _context = context;
         }
@@ -83,7 +82,7 @@ namespace RestWithASPNETUdemy.Model.Services.Implementations
 
         }
 
-        private bool Exists(int id)
+        public bool Exists(int id)
         {
             return _context.People.Any(p => p.Id.Equals(id));
         }
