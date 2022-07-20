@@ -1,11 +1,11 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using RestWithASPNETUdemy.Model.Base;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace RestWithASPNETUdemy.Model
 {
     [Table("Book")]
-    public class Book
+    public class Book : BaseEntity
     {
-        public int Id { get; set; }
         public string Author { get; set; }
         public string Title { get; set; }
         public DateTime LaunchDate { get; set; }
