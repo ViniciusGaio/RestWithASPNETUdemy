@@ -3,6 +3,8 @@ using Microsoft.Net.Http.Headers;
 using RestWithASPNETUdemy.Business;
 using RestWithASPNETUdemy.Business.Implementations;
 using RestWithASPNETUdemy.Data;
+using RestWithASPNETUdemy.Hypermedia.Enricher;
+using RestWithASPNETUdemy.Hypermedia.Filters;
 using RestWithASPNETUdemy.Repository;
 using RestWithASPNETUdemy.Repository.Generic;
 
@@ -26,6 +28,12 @@ builder.Services.AddMvc(options =>
     options.FormatterMappings.SetMediaTypeMappingForFormat("json", MediaTypeHeaderValue.Parse("application/sjon"));
 }).AddXmlSerializerFormatters();
 
+var filterOptions = new HyperMediaFilterOptions();
+filterOptions.ContentResponseEnricherList.Add(new PersonEnricher());
+filterOptions.ContentResponseEnricherList.Add(new BookEnricher());
+
+builder.Services.AddSingleton(filterOptions);
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -35,6 +43,8 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.MapControllerRoute("DefaultApi", "{controller=values}/{id?}");
 
 app.Run();
 

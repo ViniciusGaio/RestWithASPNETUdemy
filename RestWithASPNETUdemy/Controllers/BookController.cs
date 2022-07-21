@@ -1,14 +1,14 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using RestWithASPNETUdemy.Business;
 using RestWithASPNETUdemy.Data.VO;
-using RestWithASPNETUdemy.Model;
+using RestWithASPNETUdemy.Hypermedia.Filters;
 
-namespace RestWithASPNETUdemy.Controllers
+namespace RestWithASPNETUdemy.ControllersBase
 {
     [ApiVersion("1")]
     [ApiController]
     [Route("api/v{version:apiVersion}/[controller]")]
-    public class BookController : Controller
+    public class BookController : ControllerBase
     {
         private readonly ILogger<BookController> _logger;
         private IBookBusiness _bookBusiness;
@@ -20,11 +20,13 @@ namespace RestWithASPNETUdemy.Controllers
         }
 
         [HttpGet]
+        [TypeFilter(typeof(HyperMediaFilter))]
         public IActionResult Get()
         {
             return Ok(_bookBusiness.FindAll());
         }
         [HttpGet("{id}")]
+        [TypeFilter(typeof(HyperMediaFilter))]
         public IActionResult Get(int id)
         {
             var book = _bookBusiness.FindById(id);
@@ -32,12 +34,14 @@ namespace RestWithASPNETUdemy.Controllers
             return Ok(book);
         }
         [HttpPost]
+        [TypeFilter(typeof(HyperMediaFilter))]
         public IActionResult Post([FromBody] BookVO book)
         {
             if (book == null) return BadRequest();
             return Ok(_bookBusiness.Create(book));
         }
         [HttpPut]
+        [TypeFilter(typeof(HyperMediaFilter))]
         public IActionResult Put([FromBody] BookVO book)
         {
             if (book == null) return BadRequest();
