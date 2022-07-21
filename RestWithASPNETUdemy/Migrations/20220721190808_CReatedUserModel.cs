@@ -1,10 +1,11 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
 namespace RestWithASPNETUdemy.Migrations
 {
-    public partial class BooksSeeding : Migration
+    public partial class CReatedUserModel : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -22,6 +23,39 @@ namespace RestWithASPNETUdemy.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Book", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "People",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    FirstName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    LastName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Address = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Gender = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_People", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Users",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Password = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    FullName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    RefreshToken = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    RefreshTokenExpiryTime = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Users", x => x.Id);
                 });
 
             migrationBuilder.InsertData(
@@ -45,12 +79,37 @@ namespace RestWithASPNETUdemy.Migrations
                     { 14, "Marc J. Schiller", new DateTime(2017, 11, 7, 0, 0, 0, 0, DateTimeKind.Unspecified), 45.0, "Os 11 segredos de líderes de TI altamente influentes" },
                     { 15, "Aguinaldo Aragon Fernandes e Vladimir Ferraz de Abreu", new DateTime(2017, 11, 7, 0, 0, 0, 0, DateTimeKind.Unspecified), 54.0, "Implantando a governança de TI" }
                 });
+
+            migrationBuilder.InsertData(
+                table: "People",
+                columns: new[] { "Id", "Address", "FirstName", "Gender", "LastName" },
+                values: new object[,]
+                {
+                    { 1, "Curitiba - PR", "João", "Male", "Vitor" },
+                    { 2, "Anchiano - Italy", "Leonardo", "Male", "Da Vinci" },
+                    { 3, "Porbandar - India", "Mahatma", "Male", "Gandhi" },
+                    { 4, "Kentucky - USA", "Mohamed Ali", "Male", "Gandhi" },
+                    { 5, "Mvezo - South Africa", "Nelson", "Male", "Mandela" },
+                    { 6, "New England", "Vitoria", "Female", "Elizabeth" },
+                    { 7, "São Paulo - Brasil", "Ayrton", "Male", "Senna" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Users",
+                columns: new[] { "Id", "FullName", "Password", "RefreshToken", "RefreshTokenExpiryTime", "UserName" },
+                values: new object[] { 1, "Vinicius Gaio Moncorvo", "123456", "h9lzVOoLlBoTbcQrh/e16/aIj+4p6C67lLdDbBRMsjE=", new DateTime(2022, 8, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "viniciusgaio" });
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
                 name: "Book");
+
+            migrationBuilder.DropTable(
+                name: "People");
+
+            migrationBuilder.DropTable(
+                name: "Users");
         }
     }
 }

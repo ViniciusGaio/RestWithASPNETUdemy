@@ -12,8 +12,8 @@ using RestWithASPNETUdemy.Data;
 namespace RestWithASPNETUdemy.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20220719195948_BooksSeeding")]
-    partial class BooksSeeding
+    [Migration("20220721190808_CReatedUserModel")]
+    partial class CReatedUserModel
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -257,6 +257,50 @@ namespace RestWithASPNETUdemy.Migrations
                             FirstName = "Ayrton",
                             Gender = "Male",
                             LastName = "Senna"
+                        });
+                });
+
+            modelBuilder.Entity("RestWithASPNETUdemy.Model.User", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("FullName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Password")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RefreshToken")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("RefreshTokenExpiryTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UserName")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Users");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            FullName = "Vinicius Gaio Moncorvo",
+                            Password = "123456",
+                            RefreshToken = "h9lzVOoLlBoTbcQrh/e16/aIj+4p6C67lLdDbBRMsjE=",
+                            RefreshTokenExpiryTime = new DateTime(2022, 8, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            UserName = "viniciusgaio"
                         });
                 });
 #pragma warning restore 612, 618

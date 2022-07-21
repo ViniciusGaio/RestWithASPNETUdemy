@@ -14,6 +14,13 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
+builder.Services.AddCors(options => options.AddDefaultPolicy(builder =>
+{
+    builder.AllowAnyOrigin();
+    builder.AllowAnyHeader();
+    builder.AllowAnyMethod();
+})); 
+
 builder.Services.AddControllers();
 builder.Services.AddApiVersioning();   
 builder.Services.AddScoped<IPersonBusiness, PersonBusinessImplementation>();
@@ -57,9 +64,13 @@ app.UseHttpsRedirection();
  
 app.UseAuthorization();
 
+
 app.MapControllers();
 
 app.MapControllerRoute("DefaultApi", "{controller=values}/{id?}");
+
+app.UseCors();
+
 
 app.UseSwagger();
 app.UseSwaggerUI( c =>
