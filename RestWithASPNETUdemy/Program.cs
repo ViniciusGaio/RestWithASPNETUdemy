@@ -1,5 +1,7 @@
+using Microsoft.AspNetCore.Rewrite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Net.Http.Headers;
+using Microsoft.OpenApi.Models;
 using RestWithASPNETUdemy.Business;
 using RestWithASPNETUdemy.Business.Implementations;
 using RestWithASPNETUdemy.Data;
@@ -33,6 +35,19 @@ filterOptions.ContentResponseEnricherList.Add(new PersonEnricher());
 filterOptions.ContentResponseEnricherList.Add(new BookEnricher());
 
 builder.Services.AddSingleton(filterOptions);
+builder.Services.AddSwaggerGen(c =>
+    c.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Title = "Rest API's From 0 to Azure with ASP .NET Core 5 and Docker",
+        Version = "v1",
+        Description = "API RESTful developed in course 'Rest API's From 0 to Azure with ASP .NET Core 5 and Docker'",
+        Contact = new OpenApiContact
+        {
+            Name = "Vinicius Gaio",
+            Url = new Uri("https://github.com/ViniciusGaio")
+        }
+    })
+);
 
 var app = builder.Build();
 
@@ -45,6 +60,16 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.MapControllerRoute("DefaultApi", "{controller=values}/{id?}");
+
+app.UseSwagger();
+app.UseSwaggerUI( c =>
+{
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Rest API's From 0 to Azure with ASP .NET Core 5 and Docker");
+});
+
+var option = new RewriteOptions();
+option.AddRedirect("^$", "swagger");
+app.UseRewriter(option);
 
 app.Run();
 
