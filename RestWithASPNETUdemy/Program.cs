@@ -1,14 +1,22 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Rewrite;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.Net.Http.Headers;
 using Microsoft.OpenApi.Models;
 using RestWithASPNETUdemy.Business;
 using RestWithASPNETUdemy.Business.Implementations;
+using RestWithASPNETUdemy.Configurations;
 using RestWithASPNETUdemy.Data;
 using RestWithASPNETUdemy.Hypermedia.Enricher;
 using RestWithASPNETUdemy.Hypermedia.Filters;
 using RestWithASPNETUdemy.Repository;
 using RestWithASPNETUdemy.Repository.Generic;
+using RestWithASPNETUdemy.Services;
+using RestWithASPNETUdemy.Services.Implementations;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,6 +33,9 @@ builder.Services.AddControllers();
 builder.Services.AddApiVersioning();   
 builder.Services.AddScoped<IPersonBusiness, PersonBusinessImplementation>();
 builder.Services.AddScoped<IBookBusiness, BookBusinessImplementation>();
+builder.Services.AddScoped<ILoginBusiness, LoginBusinessImplementation>();
+builder.Services.AddTransient<ITokenService, TokenService>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped(typeof(IRepository<>), typeof(GenericRepository<>));
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(
     builder.Configuration.GetConnectionString("DefaultConnection")
@@ -68,6 +79,39 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.MapControllerRoute("DefaultApi", "{controller=values}/{id?}");
+
+var tokenConfigurations = new TokenConfiguration();
+new ConfigureFromConfigurationOptions<TokenConfiguration>(
+        app.Configuration.GetSection("TokenConfigurations")
+        ).Configure(tokenConfigurations);
+
+builder.Services.AddSingleton(tokenConfigurations);
+
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+
+}).AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = tokenConfigurations.Issuer,
+        ValidAudience = tokenConfigurations.Audience,
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(tokenConfigurations.Secret))
+    };
+});
+
+builder.Services.AddAuthorization(auth =>
+{
+    auth.AddPolicy("Bearer", new AuthorizationPolicyBuilder()
+        .AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme)
+        .RequireAuthenticatedUser().Build());
+});
 
 app.UseCors();
 
