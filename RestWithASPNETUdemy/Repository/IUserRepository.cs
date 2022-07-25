@@ -6,6 +6,6 @@ namespace RestWithASPNETUdemy.Repository
     public interface IUserRepository
     {
         User ValidateCredentials(UserVO user);
-        User RefrashUserInfo(User user);
+        User RefreshUserInfo(User user);
     }
 }

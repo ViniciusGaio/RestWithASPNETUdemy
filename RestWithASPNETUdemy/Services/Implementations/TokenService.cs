@@ -9,7 +9,7 @@ namespace RestWithASPNETUdemy.Services.Implementations
 {
     public class TokenService : ITokenService
     {
-        private readonly TokenConfiguration _configuration;
+        private TokenConfiguration _configuration;
 
         public TokenService(TokenConfiguration configuration)
         {
@@ -56,7 +56,7 @@ namespace RestWithASPNETUdemy.Services.Implementations
             var tokenHandler = new JwtSecurityTokenHandler();
             SecurityToken securityToken;
 
-            ClaimsPrincipal principal = tokenHandler.ValidateToken(token, tokenValidationParamenters, out securityToken);
+            var principal = tokenHandler.ValidateToken(token, tokenValidationParamenters, out securityToken);
             var jwtSecurityToken = securityToken as JwtSecurityToken;
 
             if (jwtSecurityToken == null ||

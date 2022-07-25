@@ -14,7 +14,7 @@ namespace RestWithASPNETUdemy.Repository
         {
             _context = context;
         }
-        public User RefrashUserInfo(User user)
+        public User RefreshUserInfo(User user)
         {
             if (!_context.Users.Any(p => p.Id.Equals(user.Id))) return null;
             
