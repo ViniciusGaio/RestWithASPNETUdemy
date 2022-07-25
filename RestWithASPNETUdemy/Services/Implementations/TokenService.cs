@@ -2,6 +2,7 @@
 using RestWithASPNETUdemy.Configurations;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 
 namespace RestWithASPNETUdemy.Services.Implementations
@@ -35,12 +36,35 @@ namespace RestWithASPNETUdemy.Services.Implementations
 
         public string GenerateRefreshToken()
         {
-            throw new NotImplementedException();
+            var randomNumber = new byte[32];
+            using (var rng = RandomNumberGenerator.Create()) {
+                rng.GetBytes(randomNumber);
+                return Convert.ToBase64String(randomNumber);
+            };
         }
 
         public ClaimsPrincipal GetPrincipalFromExpiredToken(string token)
         {
-            throw new NotImplementedException();
+            var tokenValidationParamenters = new TokenValidationParameters
+            {
+                ValidateAudience = false,
+                ValidateIssuer = false,
+                ValidateIssuerSigningKey = true,
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration.Secret)),
+                ValidateLifetime = false
+            };
+            var tokenHandler = new JwtSecurityTokenHandler();
+            SecurityToken securityToken;
+
+            ClaimsPrincipal principal = tokenHandler.ValidateToken(token, tokenValidationParamenters, out securityToken);
+            var jwtSecurityToken = securityToken as JwtSecurityToken;
+
+            if (jwtSecurityToken == null ||
+                !jwtSecurityToken.Header.Alg.Equals(
+                    SecurityAlgorithms.HmacSha256,
+                    StringComparison.InvariantCulture)) throw new SecurityTokenException("Ivalid Token");
+
+            return principal;
         }
     }
 }
