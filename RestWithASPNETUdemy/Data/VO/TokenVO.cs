@@ -11,6 +11,16 @@
             RefreshToken = refreshToken;
         }
 
+        public TokenVO(string accessToken, string refreshToken)
+        {
+            AccessToken = accessToken;
+            RefreshToken = refreshToken;
+        }
+
+        public TokenVO()
+        {
+        }
+
         public bool Authenticated { get; set; }
         public string Criated { get; set; }
         public string Expiration { get; set; }

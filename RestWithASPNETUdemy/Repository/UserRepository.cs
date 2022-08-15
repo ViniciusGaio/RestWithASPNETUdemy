@@ -14,6 +14,10 @@ namespace RestWithASPNETUdemy.Repository
         {
             _context = context;
         }
+        public User ValidateCredentials(string userName)
+        {
+            return _context.Users.SingleOrDefault(u => (u.UserName == userName));
+        }
         public User RefreshUserInfo(User user)
         {
             if (!_context.Users.Any(p => p.Id.Equals(user.Id))) return null;
@@ -43,6 +47,8 @@ namespace RestWithASPNETUdemy.Repository
             var pass = ComputeHash(user.Password, new SHA256CryptoServiceProvider());
             return _context.Users.FirstOrDefault(u => (u.UserName == user.Username) && (u.Password == pass));
         }
+
+
 
         private string ComputeHash(string input, SHA256CryptoServiceProvider algorithm)
         {

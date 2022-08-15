@@ -17,5 +17,7 @@ namespace RestWithASPNETUdemy.Model
         public DateTime RefreshTokenExpiryTime { get; set; }
 
         public User() { }
+
+
     }
 }
